@@ -1,22 +1,29 @@
 #!/usr/bin/env bash
 # manage_package: Installs a package using the available package manager if not already present.
-# Usage: manage_package <package_name>
+# Usage: manage_package <package_name> [command_name]
 # Only manages one package per call.
+# If command_name is omitted, defaults to package_name.
+
+# manage_package: Installs a package using the available package manager if not already present.
+# Usage: manage_package <package_name> [command_name]
+# Only manages one package per call.
+# If command_name is omitted, defaults to package_name.
 
 manage_package() {
     local pkg="$1"
+    local cmd="${2:-$pkg}"
     if [ -z "$pkg" ]; then
         echo "[manage_package] Error: No package name provided." >&2
         return 1
     fi
 
-    # Check if the command is already available
-    if command -v "$pkg" >/dev/null 2>&1; then
-        echo "[manage_package] '$pkg' is already installed. Skipping."
+    # Check if the command is already available (do not run the command, just check presence)
+    if command -v "$cmd" >/dev/null 2>&1; then
+        echo "[manage_package] '$cmd' is already installed. Skipping."
         return 0
     fi
 
-    echo "[manage_package] Installing '$pkg'..."
+    echo "[manage_package] Installing '$pkg' (for command '$cmd')..."
 
     # Try apt-get (Debian/Ubuntu)
     if command -v apt-get >/dev/null 2>&1; then
