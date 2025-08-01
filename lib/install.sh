@@ -23,6 +23,11 @@ manage_package() {
         return 0
     fi
 
+    if [ "${DRY_RUN:-0}" -eq 1 ]; then
+        echo "[DRY-RUN][manage_package] Would install '$pkg' (for command '$cmd')"
+        return 0
+    fi
+
     echo "[manage_package] Installing '$pkg' (for command '$cmd')..."
 
     # Try apt-get (Debian/Ubuntu)

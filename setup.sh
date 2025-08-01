@@ -1,18 +1,38 @@
 #!/usr/bin/env bash
 set -e
 
-PROFILE="$1"
-DOTFILES="$HOME/.dotfiles"
+# Source environment variables
+ENV_FILE="$(dirname "$0")/env.sh"
+[ -f "$ENV_FILE" ] && source "$ENV_FILE"
+export DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
 
-# Clone dotfiles if missing (placeholder, not active in this test)
-#[ -d "$DOTFILES" ] || git clone https://github.com/yourname/dotfiles.git "$DOTFILES"
+DRY_RUN=0
+PROFILE=""
+for arg in "$@"; do
+  case "$arg" in
+    --dry-run|-n)
+      DRY_RUN=1
+      ;;
+    *)
+      if [ -z "$PROFILE" ]; then
+        PROFILE="$arg"
+      fi
+      ;;
+  esac
+  shift
+done
 
-# Load core functions
+# Load core functions (including manage_package)
 for file in "$(dirname "$0")/lib"/*.sh; do
   [ -f "$file" ] && source "$file"
 done
 
-# Run profile logic
+# Ensure git and stow are installed before anything else
+manage_package git
+manage_package stow
+
+export DRY_RUN
+
 PROFILE_PATH="$(dirname "$0")/profiles/$PROFILE.sh"
 if [ -f "$PROFILE_PATH" ]; then
   source "$PROFILE_PATH"
