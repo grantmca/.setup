@@ -12,6 +12,15 @@ add_layer() {
     echo "[DRY-RUN][add_layer] Would stow layer '$layer' from '$src_root' to '$HOME'"
     return 0
   fi
-  stow -d "$src_root" -t "$HOME" "$layer"
+
+  local stow_output
+  stow_output=$(stow --no -v -d "$src_root" -t "$HOME" "$layer" 2>&1)
+  if echo "$stow_output" | grep -qE '^(LINK|SYMLINK):'; then
+    stow -d "$src_root" -t "$HOME" "$layer"
+    echo "[INFO][add_layer] Layer '$layer' added successfully."
+  else
+    echo "[INFO][add_layer] Layer '$layer' already exists and is up to date."
+  fi
+
 }
 
