@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# Sample dev profile for dotfiles setup framework
-# This profile ensures core dev tools are installed
 
 manage_package git
 manage_package curl
