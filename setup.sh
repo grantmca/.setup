@@ -4,27 +4,29 @@ set -e
 # Source environment variables
 ENV_FILE="$(dirname "$0")/env.sh"
 [ -f "$ENV_FILE" ] && source "$ENV_FILE"
-export DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
 
 # Parse arguments
 DRY_RUN=0
 SUBCOMMAND=""
 PROFILE=""
-for arg in "$@"; do
-  case "$arg" in
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
     --dry-run|-n)
       DRY_RUN=1
+      shift
       ;;
-    add-layer)
-      SUBCOMMAND="add-layer"
+    create-layer)
+      SUBCOMMAND="create-layer"
+      shift
       ;;
     *)
       if [ -z "$PROFILE" ]; then
-        PROFILE="$arg"
+        PROFILE="$1"
       fi
+      shift
       ;;
   esac
-  shift
 done
 
 # Load core functions (including manage_package)
@@ -32,8 +34,8 @@ for file in "$(dirname "$0")/lib"/*.sh; do
   [ -f "$file" ] && source "$file"
 done
 
-if [ "$SUBCOMMAND" = "add-layer" ]; then
-  add_layer_cmd "$PROFILE"
+if [ "$SUBCOMMAND" = "create-layer" ]; then
+  create_layer_cmd "$PROFILE"
   exit 0
 fi
 
