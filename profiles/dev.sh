@@ -8,5 +8,5 @@ manage_package ripgrep rg
 manage_package bat batcat
 manage_package ghostty
 
-create_layer nvim
-create_layer ghostty
+add_layer nvim
+add_layer ghostty
